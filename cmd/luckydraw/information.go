@@ -3,7 +3,6 @@ package main
 import (
 	"gopkg.in/yaml.v3"
 	"io"
-	"os"
 )
 
 type Information struct {
@@ -13,16 +12,12 @@ type Information struct {
 	Members []string `yaml:"members"`
 }
 
-func LoadInformation(filepath string) (info *Information, err error) {
+func LoadInformation(reader io.Reader) (info *Information, err error) {
 	var (
-		fp  *os.File
 		buf []byte
 	)
-	if fp, err = os.Open(filepath); err != nil {
-		return info, err
-	}
 
-	if buf, err = io.ReadAll(fp); err != nil {
+	if buf, err = io.ReadAll(reader); err != nil {
 		return info, err
 	}
 

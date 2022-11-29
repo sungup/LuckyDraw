@@ -25,7 +25,7 @@ func (l *LuckyDrawLayout) MinSize(_ []fyne.CanvasObject) fyne.Size {
 	return fyne.NewSize(fyne.Max(titleMinSz.Width, bodyMinSz.Width), titleMinSz.Height+bodyMinSz.Height)
 }
 
-func (l *LuckyDrawLayout) Layout(objects []fyne.CanvasObject, containerSize fyne.Size) {
+func (l *LuckyDrawLayout) Layout(_ []fyne.CanvasObject, containerSize fyne.Size) {
 	l.title.Move(fyne.NewPos(0, 0))
 	l.title.Resize(l.title.MinSize())
 
@@ -43,7 +43,9 @@ func NewLuckyDrawLayout(title fyne.CanvasObject, body fyne.CanvasObject) fyne.La
 func main() {
 	_ = os.Setenv("FYNE_FONT", "fonts/BMJUA_ttf.ttf")
 
-	info, err := LoadInformation("luckydraw.yaml")
+	fp, _ := os.Open("luckydraw.yaml")
+
+	info, err := LoadInformation(fp)
 	if err != nil {
 		panic(err)
 	}
