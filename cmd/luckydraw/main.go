@@ -1,21 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"os"
-)
-
-const (
-	top1Members = 1
-	top2Members = 2
-	top3Members = 3
-	top4Members = 4
-	top5Members = 5
-	top6Members = 7
-	top7Members = 10
 )
 
 var (
@@ -57,41 +48,63 @@ func main() {
 		panic(err)
 	}
 
+	drawTable := make([]*Members, 0)
+	for i, cnt := range memberCount {
+		var (
+			title   string
+			members []string
+		)
+
+		if i == 0 {
+			title = "All Members"
+			members = info.Members
+		} else {
+			title = fmt.Sprintf("Top %d", i)
+			members = []string{}
+		}
+
+		drawTable = append(drawTable, NewMembers(title, cnt, members...))
+	}
+
 	a := app.New()
 	w := a.NewWindow("Lucky Draw")
 
 	title := container.NewHBox(
 		widget.NewCard(info.Title, info.Intro, widget.NewRichTextWithText(info.Message)),
 		container.NewVBox(
-			widget.NewButton("Shuffle", func() {}),
-			widget.NewButton("Go!", func() {}),
+			widget.NewButton("Shuffle", drawTable[0].Shuffle),
+			widget.NewButton("Go!", func() {
+				var name string
+
+				if drawTable[0].Len() > 0 {
+					name = drawTable[0].Pick()
+				}
+
+				for i := len(drawTable) - 1; i > 0; i-- {
+					if !drawTable[i].IsFull() {
+						drawTable[i].Append(name)
+						break
+					}
+				}
+			}),
 		),
 	)
 
-	partMembers := NewMembers("All Members", info.Members...)
-	top1 := NewMembers("Top 1")
-	top2 := NewMembers("Top 2")
-	top3 := NewMembers("Top 3")
-	top4 := NewMembers("Top 4")
-	top5 := NewMembers("Top 5")
-	top6 := NewMembers("Top 6")
-	top7 := NewMembers("Top 7")
-
 	body := container.NewHBox(
-		partMembers.Widget(200, 600),
+		drawTable[0].Widget(200, 600),
 		container.NewGridWithRows(
 			3,
-			top1.Widget(200, 600),
-			top2.Widget(200, 600),
-			top3.Widget(200, 600),
+			drawTable[1].Widget(200, 600),
+			drawTable[2].Widget(200, 600),
+			drawTable[3].Widget(200, 600),
 		),
 		container.NewGridWithRows(
 			2,
-			top4.Widget(200, 600),
-			top5.Widget(200, 600),
+			drawTable[4].Widget(200, 600),
+			drawTable[5].Widget(200, 600),
 		),
-		top6.Widget(200, 600),
-		top7.Widget(200, 600),
+		drawTable[6].Widget(200, 600),
+		drawTable[7].Widget(200, 600),
 	)
 
 	body.Resize(fyne.NewSize(0, 0))
