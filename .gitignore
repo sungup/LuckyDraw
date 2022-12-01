@@ -16,3 +16,7 @@
 
 # Goland project directory
 .idea/
+
+# Personal project directory
+tmp/
+build/
