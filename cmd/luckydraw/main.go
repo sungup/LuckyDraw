@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	"os"
 )
@@ -30,7 +31,7 @@ func main() {
 	drawTable := NewDrawTable(32, []int{1, 2, 3, 4, 5, 7, 10})
 	info := NewInformation()
 
-	d := dialog.NewFileOpen(func(closer fyne.URIReadCloser, err error) {
+	openFile := dialog.NewFileOpen(func(closer fyne.URIReadCloser, err error) {
 		if err == nil && closer != nil {
 			if err = info.Load(closer); err != nil {
 				panic(err)
@@ -42,11 +43,12 @@ func main() {
 			}
 		}
 	}, w)
+	openFile.SetFilter(storage.NewExtensionFileFilter([]string{".yaml", ".yml"}))
 
 	title := container.NewHBox(
 		info.Widget(),
 		container.NewVBox(
-			widget.NewButton("Open File", func() { d.Show() }),
+			widget.NewButton("Open File", func() { openFile.Show() }),
 			widget.NewButton("Shuffle", drawTable[0].Shuffle),
 			widget.NewButton("Go!", func() {
 				var name string
