@@ -50,8 +50,14 @@ func (m *Members) Shuffle() {
 	m.Refresh()
 }
 
-func (m *Members) Append(name string) {
-	m.members = append(m.members, name)
+func (m *Members) Reset(name ...string) {
+	m.members = name
+
+	m.Refresh()
+}
+
+func (m *Members) Append(name ...string) {
+	m.members = append(m.members, name...)
 
 	m.Refresh()
 }
